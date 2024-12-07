@@ -1,6 +1,7 @@
 "use client";
 
 import CatalogList from "./components/CatalogList";
+// import CatalogList from "./components/CatalogList";
 import { useState } from "react";
 
 export default function CatalogPage() {

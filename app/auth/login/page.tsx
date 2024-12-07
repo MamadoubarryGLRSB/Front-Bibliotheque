@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 
+interface FormData {
+  email: string;
+  password: string;
+}
+
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
@@ -55,7 +60,7 @@ const LoginPage = () => {
           </button>
         </form>
         <p className="text-sm text-center mt-4">
-          Vous n'avez pas de compte ?{" "}
+        Vous n&#39;avez pas de compte ?{" "}
           <Link href="/auth/register" className="text-blue-500 hover:underline">
             Créez-en un
           </Link>

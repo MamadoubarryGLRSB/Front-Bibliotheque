@@ -1,7 +1,8 @@
 "use client";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from "next/link";
-import { UserIcon } from "@heroicons/react/outline";
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
 
 const Header = () => {
@@ -22,7 +23,8 @@ const Header = () => {
           onClick={toggleMenu}
           className="bg-white text-blue-500 px-4 py-2 rounded-full hover:bg-gray-200"
         >
-          <UserIcon className="h-6 w-6" />
+          <FontAwesomeIcon icon={faUser} />
+          {/* <FontAwesomeIcon icon="fa-solid fa-user" /> */}
         </button>
 
         {menuOpen && (
