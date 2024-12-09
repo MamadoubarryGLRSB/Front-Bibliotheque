@@ -1,16 +1,15 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "images.amazon.com",
-        pathname: "/**", // Permet de charger toutes les images depuis ce domaine
-      },
-    ],
-  },
-  /* config options here */
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**'
+      }
+    ]
+  }
 };
 
 export default nextConfig;

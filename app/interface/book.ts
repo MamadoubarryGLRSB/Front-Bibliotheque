@@ -10,7 +10,7 @@ export interface Book {
   image_url_m: string;
   image_url_l: string;
   availability: boolean;
-  library?: Library | null; // Optionnel, car parfois le champ est nul
+  library?: Library | null;
 }
 
 export interface Library {
