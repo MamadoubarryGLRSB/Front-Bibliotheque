@@ -1,27 +1,41 @@
-"use client";
+import CatalogList from '@/components/book/cataog-wrapper';
 
-import CatalogList from "./components/CatalogList";
-// import CatalogList from "./components/CatalogList";
-import { useState } from "react";
+export async function getBooks() {
+  try {
+    const res = await fetch('http://localhost:8080/api/books', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      next: { tags: ['books'] }
+    });
 
-export default function CatalogPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+    if (!res.ok) {
+      throw new Error(`Erreur HTTP : ${res.status}`);
+    }
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value.toLowerCase());
-  };
+    const books = await res.json();
+    return books;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Erreur dans getBooks:', error.message);
+      throw new Error(error.message);
+    } else {
+      console.error('Une erreur inconnue est survenue');
+      throw new Error('An unknown error occurred');
+    }
+  }
+}
 
+export default async function CatalogPage() {
+  const dataBook = await getBooks();
+  console.log(dataBook);
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Book Catalog</h1>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        placeholder="Rechercher par titre, auteur ou catégorie..."
-        className="w-full px-4 py-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <CatalogList searchTerm={searchTerm} />
+      <h1 className="text-2xl font-bold mb-4 text-center">Book Catalog</h1>
+      <p className="text-lg text-center">Explorez notre catalogue de livres disponibles.</p>
+
+      <CatalogList dataBook={dataBook} />
     </div>
   );
 }
