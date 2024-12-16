@@ -32,7 +32,7 @@ export default function Home() {
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder="Rechercher par titre, auteur ou catégorie..."
-            className="w-full max-w-md px-4 py-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full max-w-md px-4 py-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           />
         </div>
       </div>
@@ -43,7 +43,7 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1506755592701-4c63ddf420ed"
+                src="/images/couvpololelivredesmerveilles.jpg"
                 alt="Livre 1"
                 width={400}
                 height={250}
@@ -57,7 +57,7 @@ export default function Home() {
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1510912548015-9c8fc7e288ea"
+                src="/images/9782360754298_1_75.jpg"
                 alt="Livre 2"
                 width={400}
                 height={250}
@@ -71,7 +71,7 @@ export default function Home() {
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1483864435524-5c951462bcbf"
+                src="/images/couvpololelivredesmerveilles.jpg"
                 alt="Livre 3"
                 width={400}
                 height={250}
@@ -85,7 +85,7 @@ export default function Home() {
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1491938447948-8246e6b643c5"
+                src="/images/Les-Ombres-de-Paris.jpg"
                 alt="Livre 4"
                 width={400}
                 height={250}
