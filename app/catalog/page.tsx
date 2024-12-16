@@ -13,7 +13,7 @@ export default function CatalogPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Book Catalog</h1>
+      <h1 className="text-2xl font-bold mb-4">Catalogue de nos livres</h1>
       <input
         type="text"
         value={searchTerm}

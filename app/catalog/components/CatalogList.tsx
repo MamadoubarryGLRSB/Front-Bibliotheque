@@ -1,4 +1,5 @@
-import { Book, CatalogListProps } from "@/app/types/Book";
+import { Book, CatalogListProps } from "@/app/types/book";
+// import { Book, CatalogListProps } from "@/app/types/Book";
 import { useEffect, useState } from "react";
 
 import BookCard from "./BookCard";

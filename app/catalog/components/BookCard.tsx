@@ -1,6 +1,6 @@
 "use client";
 
-import { Book } from "@/app/types/Book";
+import { Book } from "@/app/types/book";
 // import Image from "next/image";
 import { useState } from "react";
 

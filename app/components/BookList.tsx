@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Book } from "@/app/types/Book";
+import { Book } from "@/app/types/book";
 import BookCard from "../catalog/components/BookCard";
 
 const BookList = () => {
