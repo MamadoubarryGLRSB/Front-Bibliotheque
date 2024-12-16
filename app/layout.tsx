@@ -1,6 +1,7 @@
-import Nav from '@/components/layout/nav';
 import './globals.css';
+
 import Footer from '@/components/layout/footer';
+import Nav from '@/components/layout/nav';
 
 export const metadata = {
   title: 'Library Catalog',
