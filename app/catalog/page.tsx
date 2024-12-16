@@ -32,10 +32,11 @@ export default async function CatalogPage() {
   console.log(dataBook);
   return (
     <div>
+
       <h1 className="text-2xl font-bold mb-4 text-center">Book Catalog</h1>
       <p className="text-lg text-center">Explorez notre catalogue de livres disponibles.</p>
 
-      <CatalogList dataBook={dataBook} />
+
     </div>
   );
 }
