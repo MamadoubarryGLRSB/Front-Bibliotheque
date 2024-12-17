@@ -3,6 +3,7 @@ import './globals.css';
 import Footer from '@/components/layout/footer';
 import Nav from '@/components/layout/nav';
 import { Toaster } from 'react-hot-toast';
+import { Providers } from './lib/action/redux/provider';
 
 export const metadata = {
   title: 'Library Catalog',
@@ -12,11 +13,15 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
-        <Toaster position="top-right" reverseOrder={false} />
-        <Nav />
-        <main className="flex-1 p-8">{children}</main>
-        <Footer />
+      <body>
+        <Providers>
+          <Nav />
+          <div>
+            <Toaster position="top-center" reverseOrder={false} />
+          </div>
+          <main className="p-10">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
