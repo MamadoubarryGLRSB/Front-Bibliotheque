@@ -1,67 +1,85 @@
 'use client';
 
+
 import Link from 'next/link';
+
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-interface FormData {
-  email: string;
-  password: string;
-}
 
-const LoginForm = () => {
-  const [formData, setFormData] = useState<FormData>({
-    email: '',
-    password: ''
-  });
+import toast from 'react-hot-toast';
+import { login } from '@/app/lib/action/auth/action';
+import { useDispatch } from 'react-redux';
+import { setAuth } from '@/app/lib/action/redux/features/auth.slice';
+import { createSession } from '@/app/lib/action/session/session';
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+export default function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+
+    try {
+      const response = await login({ email, password });
+
+      if (response?.message === 'User connected successfully') {
+        dispatch(
+          setAuth({
+            accessToken: response.token,
+            isAuth: true
+          })
+        );
+
+        await createSession({
+          email,
+          token: response.token
+        });
+
+        toast.success('Connexion réussie');
+        router.push('/profil');
+      } else {
+        toast.error(response?.message || 'Erreur de connexion');
+      }
+    } catch (error) {
+      toast.error((error as Error).message || 'Une erreur est survenue');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm mx-auto space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white shadow-md rounded-md mt-10">
+      <h2 className="text-2xl font-bold mb-4 text-center text-gray-700">Se connecter</h2>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Email</label>
         <input
           type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-2 border rounded"
           placeholder="Entrez votre email"
+          required
         />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Mot de passe</label>
         <input
           type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 border rounded"
           placeholder="Entrez votre mot de passe"
+          required
         />
       </div>
       <button
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors"
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
       >
-        Se connecter
+        Connexion
       </button>
-
-      <p className="text-sm text-center mt-4">
-        Pas de compte ?{' '}
-        <Link href="register" className="text-blue-500 hover:underline">
-          Créez-en un ici
-        </Link>
-      </p>
     </form>
   );
-};
-
-export default LoginForm;
+}
