@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
-import { z } from 'zod';
 import createUser from '@/app/lib/action/register/action';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { z } from 'zod';
 
 interface CreateUserData {
   name: string;
@@ -43,15 +43,8 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm mx-auto space-y-4 mt-12">
-      <h2 className="text-2xl font-bold text-center text-gray-700 mb-4">Créer un compte</h2>
-
+    try {
       await schema.parseAsync(formData);
-
 
       const response = await createUser(formData);
 
