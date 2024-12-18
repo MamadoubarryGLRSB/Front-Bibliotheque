@@ -22,7 +22,6 @@ const RegisterForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Register Data Submitted:', formData);
   };
 
   return (

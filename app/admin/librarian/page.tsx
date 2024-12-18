@@ -1,93 +1,72 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from "react";
 
-import { BorrowRequest } from "@/app/types/BorrowRequest";
-import { FaGavel } from "react-icons/fa"; // Icône de marteau
-import { io } from "socket.io-client";
+import { BorrowRequest } from "@/app/interface/BorrowRequest";
+import { FaGavel } from "react-icons/fa";
+import axios from "axios";
 import styles from "../../modules/librarian.module.css";
 
-const socket = io("http://localhost:3000"); // Connectez-vous au serveur
-
-interface UserDetails {
-  userName: string;
-  borrowedBooks: string[];
-}
-type BorrowRequestWithBooks = BorrowRequest & {
-  borrowedBooks: string[];
-};
+type BorrowRequestWithBooks = BorrowRequest & { borrowedBooks: string[] };
 
 const LibrarianPage: React.FC = () => {
   const [borrowRequests, setBorrowRequests] = useState<BorrowRequest[]>([]);
-  //   const [selectedRequest, setSelectedRequest] = useState<BorrowRequest | null>(null);
   const [selectedRequest, setSelectedRequest] =
     useState<BorrowRequestWithBooks | null>(null);
 
+  // Récupérer les demandes en attente depuis l'API
   useEffect(() => {
-    const mockRequests: BorrowRequest[] = [
-      {
-        id: 1,
-        userId: 101,
-        userName: "Alice Dupont",
-        bookTitle: "Les Misérables",
-        requestedAt: "2024-12-15T10:00:00Z",
-        status: "En attente",
-      },
-      {
-        id: 2,
-        userId: 102,
-        userName: "Jean Martin",
-        bookTitle: "1984",
-        requestedAt: "2024-12-15T12:30:00Z",
-        status: "En attente",
-      },
-    ];
-    setBorrowRequests(mockRequests);
+    const fetchBorrowRequests = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/loans/requests"
+        );
+        setBorrowRequests(response.data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des demandes :", error);
+      }
+    };
+
+    fetchBorrowRequests();
   }, []);
 
-  useEffect(() => {
-    // Écoute les nouvelles demandes d'emprunt
-    socket.on("new_borrow_request", (newRequest: BorrowRequest) => {
-      setBorrowRequests((prevRequests) => [...prevRequests, newRequest]);
-    });
+  
 
-    return () => {
-      socket.off("new_borrow_request");
-    };
-  }, []);
-  // Mock pour récupérer les détails d'un utilisateur et ses livres empruntés
-  const fetchUserDetails = (userName: string): UserDetails => {
-    const userMockData: UserDetails = {
-      userName,
-      borrowedBooks: ["Les Misérables", "1984", "L'Étranger"],
-    };
-    return userMockData;
+  // Afficher les détails d'une demande
+  const handleViewDetails = async (request: BorrowRequest) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/users/${request.userId}/details`
+      );
+      const userDetails = response.data;
+
+      setSelectedRequest({
+        ...request,
+        borrowedBooks: userDetails.borrowedBooks || [],
+      });
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des détails utilisateur :",
+        error
+      );
+    }
   };
 
-  // Ouvre la modale avec les détails de la demande
-  const handleViewDetails = (request: BorrowRequest) => {
-    const userDetails = fetchUserDetails(request.userName);
-    setSelectedRequest({
-      ...request,
-      borrowedBooks: userDetails.borrowedBooks,
-    });
+  // Valider une demande
+  const validateLoanRequest = async (loanId: number, isApproved: boolean) => {
+    try {
+      await axios.put(`http://localhost:8080/api/loans/validate/${loanId}`, {
+        isApproved,
+      });
+      setBorrowRequests((prev) => prev.filter((req) => req.id !== loanId));
+      alert(`Demande ${isApproved ? "approuvée" : "refusée"} avec succès.`);
+    } catch (error) {
+      console.error("Erreur lors de la validation :", error);
+      alert("Erreur : Impossible de valider la demande.");
+    }
   };
 
   const closeDetails = () => setSelectedRequest(null);
-
-  // Action pour approuver ou refuser
-  const handleAction = (status: "Approuvée" | "Refusée") => {
-    if (selectedRequest) {
-      const updatedRequest = { ...selectedRequest, status };
-      setBorrowRequests((prev) =>
-        prev.map((req) => (req.id === selectedRequest.id ? updatedRequest : req))
-      );
-
-      socket.emit("update_request", updatedRequest);
-
-      setSelectedRequest(null); 
-    }
-  };
 
   return (
     <div className={styles.librarian}>
@@ -103,39 +82,46 @@ const LibrarianPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {borrowRequests.map((request) => (
-            <tr key={request.id}>
-              <td>{request.userName}</td>
-              <td>{request.bookTitle}</td>
-              <td>{new Date(request.requestedAt).toLocaleString()}</td>
-              <td>{request.status}</td>
-              <td>
-                <FaGavel
-                  className={styles.gavelIcon}
-                  onClick={() => handleViewDetails(request)}
-                  title="Examiner la demande"
-                />
+          {borrowRequests.length > 0 ? (
+            borrowRequests.map((request) => (
+              <tr key={request.id}>
+                <td>{request.userName}</td>
+                <td>{request.bookTitle}</td>
+                {/* <td>{new Date(request.requestedAt).toLocaleString()}</td>
+                 */}
+                <td>
+                  {request.loanDate
+                    ? new Date(request.loanDate).toLocaleString()
+                    : "Date invalide"}
+                </td>
+                <td>{request.status}</td>
+                <td>
+                  <FaGavel
+                    className={styles.gavelIcon}
+                    onClick={() => handleViewDetails(request)}
+                    title="Examiner la demande"
+                  />
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={5} style={{ textAlign: "center" }}>
+                Aucune demande en attente.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
-      {/* Modale */}
+      {/* Modale des détails */}
       {selectedRequest && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
-            <h3>Informations de l&#39;utilisateur</h3>
+            <h3>Détails de la demande</h3>
             <p>
-              <strong>Nom :</strong> {selectedRequest.userName}
+              <strong>Utilisateur :</strong> {selectedRequest.userName}
             </p>
-            <h4>Livres empruntés :</h4>
-            <ul>
-              {selectedRequest.borrowedBooks.map((book, index) => (
-                <li key={index}>{book}</li>
-              ))}
-            </ul>
-            <h4>Demande actuelle :</h4>
             <p>
               <strong>Livre demandé :</strong> {selectedRequest.bookTitle}
             </p>
@@ -143,16 +129,26 @@ const LibrarianPage: React.FC = () => {
               <strong>Date de demande :</strong>{" "}
               {new Date(selectedRequest.requestedAt).toLocaleString()}
             </p>
+            <h4>Livres empruntés :</h4>
+            <ul>
+              {selectedRequest.borrowedBooks.length > 0 ? (
+                selectedRequest.borrowedBooks.map((book, index) => (
+                  <li key={index}>{book}</li>
+                ))
+              ) : (
+                <li>Aucun livre emprunté.</li>
+              )}
+            </ul>
             <div className={styles.modalActions}>
               <button
                 className={styles.approveButton}
-                onClick={() => handleAction("Approuvée")}
+                onClick={() => validateLoanRequest(selectedRequest.id, true)}
               >
                 Approuver
               </button>
               <button
                 className={styles.rejectButton}
-                onClick={() => handleAction("Refusée")}
+                onClick={() => validateLoanRequest(selectedRequest.id, false)}
               >
                 Refuser
               </button>

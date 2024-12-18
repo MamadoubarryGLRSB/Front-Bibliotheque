@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface FormData {
   email: string;
@@ -21,7 +21,6 @@ const LoginForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login Data Submitted:', formData);
   };
 
   return (

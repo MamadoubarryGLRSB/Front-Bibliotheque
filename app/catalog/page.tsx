@@ -1,4 +1,4 @@
-import CatalogList from '@/components/book/cataog-wrapper';
+import CatalogList from '@/components/book/catalog-wrapper';
 
 export async function getBooks() {
   try {
@@ -29,7 +29,6 @@ export async function getBooks() {
 
 export default async function CatalogPage() {
   const dataBook = await getBooks();
-  console.log(dataBook);
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4 text-center">Book Catalog</h1>
